@@ -1,9 +1,8 @@
 \documentclass{beamer}
-\usepackage{etex}
 
 \usepackage[utf8]{inputenc}
-\usepackage[frenchb]{babel}
-\usepackage{verbatim}
+\usepackage[english]{babel}
+\usepackage{etex}
 \usepackage{graphicx}
 \usepackage{color}
 \usepackage{hyperref}
@@ -16,38 +15,21 @@
 \usepackage{eulervm}
 \usepackage{auto-pst-pdf}
 \usepackage{pst-plot}
-\usepackage{amssymb}% http://ctan.org/pkg/amssymb
-\usepackage{pifont}% http://ctan.org/pkg/pifont
-\usepackage{tikz}
+\usepackage{amssymb}
+\usepackage{pifont}
+
+% Checked marks
 \newcommand{\cmark}{\ding{51}}%
 \newcommand{\xmark}{\ding{55}}%
 
-\usetikzlibrary{shapes,arrows}
-\tikzset{
-  every overlay node/.style={
-    draw=white,fill=white,anchor=north west,
-  },
-  every overlay node border/.style={
-    draw=black,fill=white,anchor=north west,rounded corners,
-  },
-}
-% Usage:
-% \tikzoverlay at (-1cm,-5cm) {content};
-% or
-% \tikzoverlay[text width=5cm] at (-1cm,-5cm) {content};
-\def\tikzoverlay{%
-   \tikz[baseline,overlay]\node[every overlay node]
-}%
-\def\tikzoverlayborder{%
-   \tikz[baseline,overlay]\node[every overlay node border]
-}%
-
+% Colors
 \newrgbcolor{mygreen}{.00 .5 .00}
 \newcommand{\X}[1]{\textcolor{blue}{#1}}
 \newcommand{\y}[1]{\textcolor{red}{#1}}
 \newcommand{\model}[1]{\textcolor{mygreen}{#1}}
 \newcommand{\loss}[1]{\textcolor{lightblue}{#1}}
 
+% Beamer layout
 \hypersetup{colorlinks=true, linkcolor=black, urlcolor=blue}
 \usetheme{boxes}
 \beamertemplatenavigationsymbolsempty
@@ -56,13 +38,13 @@
 \setbeamertemplate{itemize items}[circle]
 \setbeamertemplate{itemize subitem}[square]
 
+% Front slide
 \title{{\bf Tree models with Scikit-Learn}\\
 Great learners with little assumptions}
 \author{Gilles Louppe (\href{https://twitter.com/glouppe}{@glouppe}, CERN)}
 \date{April 3, 2015}
 
-\newcommand{\todo}[1]{\textcolor{red}{[TODO] #1}}
-
+% Argmax
 \DeclareMathOperator*{\argmax}{arg\,max}
 
 \begin{document}
@@ -115,22 +97,91 @@ Great learners with little assumptions}
 \section{Motivation}
 
 \begin{frame}
-  \frametitle{Motivation}
-  % use cases
+    \frametitle{Motivation}
+    \begin{figure}
+    \vspace{-0.5cm}
+    \includegraphics[scale=0.4]{./figures/motivation.png}
+    \end{figure}
 \end{frame}
 
 \begin{frame}
-  \frametitle{Running example}
+    \frametitle{Running example}
+
+    \begin{columns}
+    \begin{column}{0.5\textwidth}
+
+    \begin{center}
+    From {\bf \X{physicochemical properties}} (alcohol, acidity, sulphates, ...),
+
+    \vspace{1cm}
+    learn a {\bf \model{model}}
+    \vspace{1cm}
+
+    to predict {\bf \y{wine taste preferences}}.
+
+    \end{center}
+
+    \end{column}
+    \begin{column}{0.5\textwidth}
+      \begin{figure}
+      \vspace{-0.5cm}
+      \includegraphics[scale=0.6]{./figures/wine.jpg}
+      \end{figure}
+    \end{column}
+    \end{columns}
+
+    \vspace{1cm}
+
+    {\footnotesize \it
+    IPython notebook available at \url{https://github.com/glouppe/talk-pydata2015}}
 \end{frame}
 
 
 % Growing decision trees ======================================================
 
+\AtBeginSection[]
+{
+\begin{frame}
+  \frametitle{Outline}
+  \tableofcontents[currentsection]
+  % Die Option [pausesections]
+\end{frame}
+}
+
 \section{Growing decision trees}
 
-\begin{frame}
-  \frametitle{Supervised learning}
-  % supervised learning framework (using scikit-learn notations)
+\begin{frame}[fragile]
+    \frametitle{Supervised learning}
+
+    \begin{itemize}
+    \item Data comes as a finite learning set ${\cal L} = \texttt{(\X{X}, \y{y})}$ where
+        \begin{itemize}
+            \item \X{Inputs} are given as an array of shape \texttt{(n\_samples, n\_features)}\\
+            \vspace{0.25cm}
+            E.g., feature values for the physicochemical properties:
+\begin{verbatim}
+X = [[  7.4    0.     ...   0.56   9.4    0.  ]
+     [  7.8    0.     ...   0.68   9.8    0.  ]
+                      ...
+     [  7.8    0.04   ...   0.65   9.8    0.  ]]
+\end{verbatim}
+\vspace{0.25cm}
+
+            \item \y{Output} is given as an array of shape \texttt{(n\_samples,)}\\
+            \vspace{0.25cm}
+            E.g., wine taste preferences (from 0 to 10):
+\begin{verbatim}
+y = [5 5 5 ..., 6 7 6]
+\end{verbatim}
+        \end{itemize}
+
+    \vspace{0.25cm}
+
+    \item The goal is to build an estimator $\model{\varphi_{\cal L}}: \X{{\cal X}} \mapsto \y{{\cal Y}}$ minimizing
+    $$
+    Err(\model{\varphi_{\cal L}}) = \mathbb{E}_{\X{X},\y{Y}}\{ L(\y{Y}, \model{\varphi_{\cal L}}\texttt{.predict(}\X{X}\texttt{)}) \}.
+    $$
+    \end{itemize}
 \end{frame}
 
 \begin{frame}
