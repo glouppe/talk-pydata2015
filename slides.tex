@@ -41,8 +41,13 @@
 % Front slide
 \title{{\bf Tree models with Scikit-Learn}\\
 Great learners with little assumptions}
-\author{Gilles Louppe (\href{https://twitter.com/glouppe}{@glouppe}, CERN)}
-\date{April 3, 2015}
+\author{
+Material: \url{https://github.com/glouppe/talk-pydata2015}\\
+\vspace{1cm}
+Gilles Louppe (\href{https://twitter.com/glouppe}{@glouppe})\\
+{\it CERN}
+}
+\date{PyData, April 3, 2015}
 
 % Argmax
 \DeclareMathOperator*{\argmax}{arg\,max}
@@ -129,11 +134,6 @@ Great learners with little assumptions}
       \end{figure}
     \end{column}
     \end{columns}
-
-    \vspace{1cm}
-
-    {\footnotesize \it
-    IPython notebook available at \url{https://github.com/glouppe/talk-pydata2015}}
 \end{frame}
 
 
@@ -156,7 +156,7 @@ Great learners with little assumptions}
     \begin{itemize}
     \item Data comes as a finite learning set ${\cal L} = \texttt{(\X{X}, \y{y})}$ where
         \begin{itemize}
-            \item \X{Inputs} are given as an array of shape \texttt{(n\_samples, n\_features)}\\
+            \item \X{Input samples} are given as an array of shape \texttt{(n\_samples, n\_features)}\\
             \vspace{0.25cm}
             E.g., feature values for the physicochemical properties:
 \begin{verbatim}
@@ -167,11 +167,11 @@ X = [[  7.4    0.     ...   0.56   9.4    0.  ]
 \end{verbatim}
 \vspace{0.25cm}
 
-            \item \y{Output} is given as an array of shape \texttt{(n\_samples,)}\\
+            \item \y{Output values} are given as an array of shape \texttt{(n\_samples,)}\\
             \vspace{0.25cm}
             E.g., wine taste preferences (from 0 to 10):
 \begin{verbatim}
-y = [5 5 5 ..., 6 7 6]
+y = [5 5 5 ... 6 7 6]
 \end{verbatim}
         \end{itemize}
 
