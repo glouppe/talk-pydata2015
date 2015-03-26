@@ -10,7 +10,6 @@
 \usepackage{url}
 \usepackage{moreverb}
 \usepackage{fancyvrb}
-\usepackage{minted}
 \usepackage{natbib}
 \usepackage{eulervm}
 \usepackage{auto-pst-pdf}
@@ -18,6 +17,12 @@
 \usepackage{amssymb}
 \usepackage{pifont}
 \usepackage{algpseudocode}
+
+% Code snippets
+\usepackage{minted}
+\definecolor{rulecolor}{rgb}{0.80,0.80,0.80}
+\definecolor{bgcolor}{rgb}{1.0,1.0,1.0}
+\newminted{python}{bgcolor=bgcolor}
 
 % Checked marks
 \newcommand{\cmark}{\ding{51}}%
@@ -244,8 +249,43 @@ y = [5 5 5 ... 6 7 6]
     \end{block}
 \end{frame}
 
-\begin{frame}
-    \frametitle{\texttt{sklearn.tree.DecisionTreeClassifier|Regressor}}
+\begin{frame}[fragile]
+    \frametitle{\texttt{sklearn.tree}}
+
+{\footnotesize
+\begin{pythoncode}
+# Fit a decision tree
+from sklearn.tree import DecisionTreeRegressor
+estimator = DecisionTreeRegressor(max_leaf_nodes=5)
+estimator.fit(X_train, y_train)
+>>> DecisionTreeRegressor(criterion='mse', ...)
+
+# Predict target values
+y_pred = estimator.predict(X_test)
+
+# R^2 score on test data
+score = estimator.score(X_test, y_test)
+>>> 0.230147545515
+\end{pythoncode}
+}
+
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Visualize and interpret}
+
+{\footnotesize
+\begin{pythoncode}
+# Display tree
+from sklearn.tree import export_graphviz
+export_graphviz(estimator, out_file="tree.dot",
+                feature_names=feature_names)
+\end{pythoncode}
+}
+
+\begin{figure}
+\includegraphics[width=0.8\textwidth]{./figures/wine-tree.png}
+\end{figure}
 
 \end{frame}
 
