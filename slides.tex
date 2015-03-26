@@ -17,6 +17,7 @@
 \usepackage{pst-plot}
 \usepackage{amssymb}
 \usepackage{pifont}
+\usepackage{algpseudocode}
 
 % Checked marks
 \newcommand{\cmark}{\ding{51}}%
@@ -158,8 +159,9 @@ Gilles Louppe (\href{https://twitter.com/glouppe}{@glouppe})\\
         \begin{itemize}
             \item \X{Input samples} are given as an array of shape \texttt{(n\_samples, n\_features)}\\
             \vspace{0.25cm}
-            E.g., feature values for the physicochemical properties:
+            E.g., feature values for wine physicochemical properties:
 \begin{verbatim}
+# fixed acidity, volatile acidity, ...
 X = [[  7.4    0.     ...   0.56   9.4    0.  ]
      [  7.8    0.     ...   0.68   9.8    0.  ]
                       ...
@@ -184,18 +186,78 @@ y = [5 5 5 ... 6 7 6]
     \end{itemize}
 \end{frame}
 
-\begin{frame}
-  \frametitle{Divide and conquer}
+\begin{frame}[fragile]
+    \frametitle{Decision trees [L. Breiman, 1984]}
+    \begin{columns}
+        \begin{column}{0.3\textwidth}
+            \begin{figure}
+            \includegraphics[width=\textwidth]{./figures/tree-partition-d.pdf}
+            \end{figure}
+        \end{column}
+        \begin{column}{0.7\textwidth}
+            \begin{figure}
+            \includegraphics[width=\textwidth]{./figures/tree-simple.pdf}
+            \end{figure}
+        \end{column}
+    \end{columns}
+
+{\scriptsize
+\begin{algorithmic}
+\Function{BuildDecisionTree}{${\cal L}$}
+    \State Create node $t$
+    \If{the stopping criterion is met for $t$}
+        \State Assign a model to $\widehat{y}_t$
+    \Else
+        \State Find the split on ${\cal L}$ that maximizes impurity decrease $$s^* = \argmax_{s} i(t) - p_L i(t^s_L) - p_R i(t^s_R)$$
+        \State Partition ${\cal L}$ into ${\cal L}_{t_L} \cup {\cal L}_{t_R}$ according to $s^*$
+        \State $t_L = \Call{BuildDecisionTree}{{\cal L}_{t_L}}$
+        \State $t_R = \Call{BuildDecisionTree}{{\cal L}_{t_R}}$
+    \EndIf
+    \State \Return $t$
+\EndFunction
+\end{algorithmic}
+}
+
 \end{frame}
 
 \begin{frame}
-  \frametitle{Decision trees framework}
-  % framework impurity / simple model at leaves => mention density estimation, classifi and regression
+    \frametitle{Composability of decision trees}
+
+    Decision trees can be used to solve several machine learning tasks by simply swapping the impurity and leaf model functions.
+
+    \vspace{0.5cm}
+
+    \begin{block}{0-1 loss (classification)}
+    $\widehat{y}_t = \argmax_{c \in {\cal Y}} p(c|t)$, $i(t) = \text{entropy}(t)$ or $i(t) = \text{gini}(t)$
+    \end{block}
+
+    \begin{block}{Mean squared error (regression)}
+    $\widehat{y}_t = \text{mean}(y|t)$, $i(t) = \frac{1}{N_t} \sum_{\mathbf{x}, y \in {\cal L}_t} (y - \widehat{y}_t)^2$
+    \end{block}
+
+    \begin{block}{Least absolute deviance (regression)}
+    $\widehat{y}_t = \text{median}(y|t)$, $i(t) = \frac{1}{N_t} \sum_{\mathbf{x}, y \in {\cal L}_t} |y - \widehat{y}_t|$
+    \end{block}
+
+    \begin{block}{Density estimation}
+    $\widehat{y}_t = {\cal N}(\mu_t, \Sigma_t)$, $i(t) = \text{differential entropy}(t)$
+    \end{block}
+\end{frame}
+
+\begin{frame}
+    \frametitle{\texttt{sklearn.tree.DecisionTreeClassifier|Regressor}}
+
 \end{frame}
 
 \begin{frame}
   \frametitle{Strengths and weaknesses}
-  % use a continued table from slide to sldie
+
+  \begin{itemize}
+    \item {\color{blue} Non-parametric} model
+    \item {\color{blue} Fast} to train ($\Theta(pN\log^2 N)$)
+    \item Easily {\color{blue} interpretable}
+    \item {\color{blue} Low bias}, but usually {\color{red} high variance}
+  \end{itemize}
 \end{frame}
 
 
