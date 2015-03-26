@@ -17,6 +17,7 @@
 \usepackage{amssymb}
 \usepackage{pifont}
 \usepackage{algpseudocode}
+\usepackage{multirow}
 
 % Code snippets
 \usepackage{minted}
@@ -294,9 +295,21 @@ export_graphviz(estimator, out_file="tree.dot",
 
   \begin{itemize}
     \item {\color{blue} Non-parametric} model
+
+    \vspace{0.25cm}
+
     \item {\color{blue} Fast} to train ($\Theta(pN\log^2 N)$)
+
+    \vspace{0.25cm}
+
     \item Easily {\color{blue} interpretable}
-    \item {\color{blue} Low bias}, but usually {\color{red} high variance}
+
+    \vspace{0.25cm}
+
+    \item {\color{blue} Low bias}, but usually {\color{red} high variance}\\
+        \begin{itemize}
+            \item Solution: {\it Combine the predictions of several randomized trees into a single model.}
+        \end{itemize}
   \end{itemize}
 \end{frame}
 
@@ -306,12 +319,73 @@ export_graphviz(estimator, out_file="tree.dot",
 \section{Random Forests}
 
 \begin{frame}
-  \frametitle{Bias-variance decomposition}
+    \frametitle{Random Forests}
+
+    \begin{figure}
+        \includegraphics[scale=0.5]{./figures/forest.pdf}
+    \end{figure}
+
+    Randomization
+
+    \vspace{0.1cm}
+
+    {\scriptsize
+    \begin{tabular}{lll}
+
+    \textbullet\hspace*{0.1cm} Bootstrap samples & \multirow{2}{*}{{\LARGE \}} {\color{blue} Random Forests}} & \\
+    \textbullet\hspace*{0.1cm}  Random selection of $K \leq p$ split variables && \multirow{2}{*}{{\LARGE \}} {\color{blue} Extra-Trees}} \\
+    \textbullet\hspace*{0.1cm}  Random selection of the threshold  & \\
+    \end{tabular}}
 \end{frame}
 
-\begin{frame}
-  \frametitle{Random Forests}
+\begin{frame}{Bias and variance}
+    \begin{figure}
+        \includegraphics[scale=0.7]{./figures/bias-variance-darts.jpg}
+    \end{figure}
 \end{frame}
+
+\begin{frame}{Bias-variance decomposition}
+
+{\bf Theorem.}
+For the squared error loss, the bias-variance decomposition of the expected
+generalization error $\mathbb{E}_{\cal L} \{ Err( \psi_{{\cal L},\theta_1,\dots,\theta_M}(\mathbf{x}))
+\}$ at $X=\mathbf{x}$ of an ensemble of $M$ randomized models $\varphi_{{\cal L},\theta_m}$ is
+\begin{equation*}
+\mathbb{E}_{\cal L} \{ Err(\psi_{{\cal L},\theta_1,\dots,\theta_M}(\mathbf{x})) \} = \text{noise}(\mathbf{x}) + \text{bias}^2(\mathbf{x}) + \text{var}(\mathbf{x}),
+\end{equation*}
+where
+\begin{align*}
+\text{noise}(\mathbf{x}) &= Err(\varphi_B(\mathbf{x})), \\
+\text{bias}^2(\mathbf{x}) &= (\varphi_B(\mathbf{x}) - \mathbb{E}_{{\cal L},\theta} \{ \varphi_{{\cal L},\theta}(\mathbf{x}) \} )^2, \\
+\text{var}(\mathbf{x}) &= \rho(\mathbf{x}) \sigma^2_{{\cal L},\theta}(\mathbf{x}) + \frac{1 - \rho(\mathbf{x})}{M} \sigma^2_{{\cal L},\theta}(\mathbf{x}).
+\end{align*}
+
+and where $\rho(\mathbf{x})$ is the Pearson correlation coefficient between
+the predictions of two randomized trees built on the same learning set.
+
+\end{frame}
+
+
+\begin{frame}{Diagnosing the generalization error of random forests}
+
+\begin{itemize}
+\item Bias: {\color{blue} Identical} to the bias of a single randomized tree.
+\item Variance: $\text{var}(\mathbf{x}) = \rho(\mathbf{x}) \sigma^2_{{\cal L},\theta}(\mathbf{x}) + \frac{1 - \rho(\mathbf{x})}{M} \sigma^2_{{\cal L},\theta}(\mathbf{x})$\\
+As $M \to \infty$, {\color{red} $\text{var}(\mathbf{x}) \to \rho(\mathbf{x}) \sigma^2_{{\cal L},\theta}(\mathbf{x})$}
+  \begin{itemize}
+    \item The stronger the randomization, $\rho(\mathbf{x}) \to 0$, $\text{var}(\mathbf{x}) \to 0$.
+    \item The weaker the randomization, $\rho(\mathbf{x}) \to 1$, $\text{var}(\mathbf{x}) \to \sigma^2_{{\cal L},\theta}(\mathbf{x})$
+  \end{itemize}
+\end{itemize}
+
+\vspace{1cm}
+
+{\bf Bias-variance trade-off.} Randomization increases bias but makes it
+possible to reduce the variance of the corresponding ensemble model. The crux
+of the problem is to {\color{red} find the right trade-off}.
+
+\end{frame}
+
 
 \begin{frame}
   \frametitle{Strengths and weaknesses}
@@ -336,11 +410,6 @@ export_graphviz(estimator, out_file="tree.dot",
 % Reading tree leaves =========================================================
 
 \section{Reading tree leaves}
-
-\begin{frame}
-  \frametitle{Reading tree leaves}
-  % Visualizing trees
-\end{frame}
 
 \begin{frame}
   \frametitle{Variable importances}
