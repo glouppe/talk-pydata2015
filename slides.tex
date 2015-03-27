@@ -302,7 +302,14 @@ export_graphviz(estimator, out_file="tree.dot",
 
     \vspace{0.25cm}
 
-    \item {\color{blue} Fast} to train ($\Theta(pN\log^2 N)$)
+    \item {\color{red}Limited choice} of loss functions
+
+    \vspace{0.25cm}
+
+    \item {\color{blue} Fast} to train
+        \begin{itemize}
+            \item In the average case, complexity is $\Theta(pN\log^2 N)$.
+        \end{itemize}
 
     \vspace{0.25cm}
 
@@ -392,7 +399,7 @@ of the problem is to {\color{red} find the right trade-off}.
 
 
 \begin{frame}[fragile]
-\frametitle{Tuning randomness in \texttt{sklearn.ensemble}}
+\frametitle{Tuning randomization in \texttt{sklearn.ensemble}}
 
 {\scriptsize
 \begin{pythoncode}
@@ -421,24 +428,50 @@ plt.legend(loc="best")
 plt.show()
 \end{pythoncode}
 }
-
 \end{frame}
 
 
 \begin{frame}[fragile]
-\frametitle{Tuning randomness in \texttt{sklearn.ensemble}}
+\frametitle{Tuning randomization in \texttt{sklearn.ensemble}}
 
     \begin{figure}
         \includegraphics[width=0.9\textwidth]{./figures/randomness.png}
     \end{figure}
 
 Best-tradeoff: ExtraTrees, for \texttt{max\_features=6}.
-
 \end{frame}
 
 
 \begin{frame}
   \frametitle{Strengths and weaknesses}
+
+  \begin{itemize}
+    \item {\color{blue} Non-parametric} model
+
+    \vspace{0.25cm}
+
+    \item {\color{red}Limited choice} of loss functions
+
+    \vspace{0.25cm}
+
+    \item Moderately fast to train
+        \begin{itemize}
+            \item $\Theta(MK\widetilde{N}\log^2 \widetilde{N})$ for RFs
+            \item $\Theta(MKN\log N)$ for ETs
+        \end{itemize}
+
+    \vspace{0.25cm}
+
+    \item Embarrassingly {\color{blue} parallel}
+
+    \vspace{0.25cm}
+
+    \item {\color{blue}Fine control} of bias and variance
+
+    \vspace{0.25cm}
+
+    \item {\color{red} Less interpretable} than decision trees
+  \end{itemize}
 \end{frame}
 
 
