@@ -253,20 +253,24 @@ y = [5 5 5 ... 6 7 6]
 \begin{frame}[fragile]
     \frametitle{\texttt{sklearn.tree}}
 
-{\footnotesize
+{\scriptsize
 \begin{pythoncode}
 # Fit a decision tree
 from sklearn.tree import DecisionTreeRegressor
-estimator = DecisionTreeRegressor(max_leaf_nodes=5)
+estimator = DecisionTreeRegressor(criterion="mse",   # Set i(t) function
+                                  max_leaf_nodes=5)  # Tune model complexity
+                                                     # with max_leaf_nodes,
+                                                     # max_depth or
+                                                     # min_samples_split
 estimator.fit(X_train, y_train)
->>> DecisionTreeRegressor(criterion='mse', ...)
 
 # Predict target values
 y_pred = estimator.predict(X_test)
 
-# R^2 score on test data
-score = estimator.score(X_test, y_test)
->>> 0.230147545515
+# MSE on test data
+from sklearn.metrics import mean_squared_error
+score = mean_squared_error(y_test, y_pred)
+>>> 0.572049826453
 \end{pythoncode}
 }
 
@@ -383,6 +387,52 @@ As $M \to \infty$, {\color{red} $\text{var}(\mathbf{x}) \to \rho(\mathbf{x}) \si
 {\bf Bias-variance trade-off.} Randomization increases bias but makes it
 possible to reduce the variance of the corresponding ensemble model. The crux
 of the problem is to {\color{red} find the right trade-off}.
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Tuning randomness in \texttt{sklearn.ensemble}}
+
+{\scriptsize
+\begin{pythoncode}
+from sklearn.ensemble import RandomForestRegressor, ExtraTreesRegressor
+from sklearn.cross_validation import ShuffleSplit
+from sklearn.learning_curve import validation_curve
+
+# Validation of max_features, controlling randomness in forests
+param_name = "max_features"
+param_range = range(1, X.shape[1]+1)
+
+for Forest, color, label in [(RandomForestRegressor, "g", "RF"),
+                             (ExtraTreesRegressor, "r", "ETs")]:
+    _, test_scores = validation_curve(
+        Forest(n_estimators=100, n_jobs=-1), X, y,
+        cv=ShuffleSplit(n=len(X), n_iter=10, test_size=0.25),
+        param_name=param_name, param_range=param_range,
+        scoring="mean_squared_error")
+    test_scores_mean = np.mean(-test_scores, axis=1)
+    plt.plot(param_range, test_scores_mean, label=label, color=color)
+
+plt.xlabel(param_name)
+plt.xlim(1, max(param_range))
+plt.ylabel("MSE")
+plt.legend(loc="best")
+plt.show()
+\end{pythoncode}
+}
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Tuning randomness in \texttt{sklearn.ensemble}}
+
+    \begin{figure}
+        \includegraphics[width=0.9\textwidth]{./figures/randomness.png}
+    \end{figure}
+
+Best-tradeoff: ExtraTrees, for \texttt{max\_features=6}.
 
 \end{frame}
 
