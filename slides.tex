@@ -67,6 +67,8 @@ Gilles Louppe (\href{https://twitter.com/glouppe}{@glouppe})\\
 
 
 % Random things to talk about:
+% - categorical features
+% - sample weights
 % - class_weights
 % - oob samples
 % - n_jobs
@@ -477,6 +479,10 @@ Best-tradeoff: ExtraTrees, for \texttt{max\_features=6}.
 \end{frame}
 
 \begin{frame}
+  \frametitle{Careful tuning required}
+\end{frame}
+
+\begin{frame}
   \frametitle{Strengths and weaknesses}
 \end{frame}
 
@@ -493,6 +499,8 @@ Best-tradeoff: ExtraTrees, for \texttt{max\_features=6}.
 {\scriptsize
 \begin{pythoncode}
 importances = pd.DataFrame()
+
+# todo: add gbrt
 
 # Variable importances with Random Forest, default parameters
 est = RandomForestRegressor(n_estimators=10000, n_jobs=-1).fit(X, y)
