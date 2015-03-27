@@ -295,20 +295,20 @@ export_graphviz(estimator, out_file="tree.dot",
 \end{frame}
 
 \begin{frame}
-  \frametitle{Strengths and weaknesses}
+  \frametitle{Strengths and weaknesses of decision trees}
 
   \begin{itemize}
-    \item {\color{blue} Non-parametric} model
+    \item {\color{blue} Non-parametric} model, supporting {\color{blue} heterogeneous} data
 
     \vspace{0.25cm}
 
-    \item {\color{red}Limited choice} of loss functions
+    \item {\color{blue}Flexibility} in loss functions (but choice is {\color{red}limited})
 
     \vspace{0.25cm}
 
-    \item {\color{blue} Fast} to train
+    \item {\color{blue} Fast} to train, {\color{blue} fast} to predict
         \begin{itemize}
-            \item In the average case, complexity is $\Theta(pN\log^2 N)$.
+            \item In the average case, complexity of training is $\Theta(pN\log^2 N)$.
         \end{itemize}
 
     \vspace{0.25cm}
@@ -319,7 +319,7 @@ export_graphviz(estimator, out_file="tree.dot",
 
     \item {\color{blue} Low bias}, but usually {\color{red} high variance}\\
         \begin{itemize}
-            \item Solution: {\it Combine the predictions of several randomized trees into a single model.}
+            \item Solution: Combine the predictions of several randomized trees into a single model.
         \end{itemize}
   \end{itemize}
 \end{frame}
@@ -330,7 +330,7 @@ export_graphviz(estimator, out_file="tree.dot",
 \section{Random Forests}
 
 \begin{frame}
-    \frametitle{Random Forests}
+    \frametitle{Random Forests [L. Breiman, 2001]}
 
     \begin{figure}
         \includegraphics[scale=0.5]{./figures/forest.pdf}
@@ -443,18 +443,15 @@ Best-tradeoff: ExtraTrees, for \texttt{max\_features=6}.
 
 
 \begin{frame}
-  \frametitle{Strengths and weaknesses}
+  \frametitle{Strengths and weaknesses of forests}
 
   \begin{itemize}
-    \item {\color{blue} Non-parametric} model
+
+    \item {\color{blue}Fine control} of bias and variance through averaging and randomization, resulting in {\color{blue} better performance}
 
     \vspace{0.25cm}
 
-    \item {\color{red}Limited choice} of loss functions
-
-    \vspace{0.25cm}
-
-    \item Moderately fast to train
+    \item Moderately fast to train and to predict
         \begin{itemize}
             \item $\Theta(MK\widetilde{N}\log^2 \widetilde{N})$ for RFs
             \item $\Theta(MKN\log N)$ for ETs
@@ -463,10 +460,6 @@ Best-tradeoff: ExtraTrees, for \texttt{max\_features=6}.
     \vspace{0.25cm}
 
     \item Embarrassingly {\color{blue} parallel}
-
-    \vspace{0.25cm}
-
-    \item {\color{blue}Fine control} of bias and variance
 
     \vspace{0.25cm}
 
@@ -480,7 +473,7 @@ Best-tradeoff: ExtraTrees, for \texttt{max\_features=6}.
 \section{Boosting}
 
 \begin{frame}
-  \frametitle{Gradient Boosted Regression Trees}
+  \frametitle{Gradient Boosted Regression Trees [J. Friedman, 1999]}
 \end{frame}
 
 \begin{frame}
@@ -494,8 +487,38 @@ Best-tradeoff: ExtraTrees, for \texttt{max\_features=6}.
 
 \section{Reading tree leaves}
 
-\begin{frame}
+\begin{frame}[fragile]
   \frametitle{Variable importances}
+
+{\scriptsize
+\begin{pythoncode}
+importances = pd.DataFrame()
+
+# Variable importances with Random Forest, default parameters
+est = RandomForestRegressor(n_estimators=10000, n_jobs=-1).fit(X, y)
+importances["RF"] = pd.Series(est.feature_importances_,
+                              index=feature_names)
+
+# Variable importances with Totally Randomized Trees
+est = ExtraTreesRegressor(max_features=1, max_depth=3,
+                          n_estimators=10000, n_jobs=-1).fit(X, y)
+importances["TRTs"] = pd.Series(est.feature_importances_,
+                                index=feature_names)
+
+# Importances from TRTs dont suffer from bias
+importances.plot(kind="barh")
+\end{pythoncode}
+}
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Variable importances}
+
+\begin{figure}
+\includegraphics[width=0.95\textwidth]{./figures/importances.png}
+\end{figure}
+
 \end{frame}
 
 \begin{frame}
