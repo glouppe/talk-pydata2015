@@ -71,7 +71,7 @@ Gilles Louppe (\href{https://twitter.com/glouppe}{@glouppe})\\
 % - sample weights
 % - class_weights
 % - oob samples
-% - n_jobs
+% outlier detection
 
 
 % Outline =====================================================================
@@ -231,7 +231,8 @@ y = [5 5 5 ... 6 7 6]
 \begin{frame}
     \frametitle{Composability of decision trees}
 
-    Decision trees can be used to solve several machine learning tasks by simply swapping the impurity and leaf model functions.
+    Decision trees can be used to solve several machine learning tasks by
+    simply swapping the impurity and leaf model functions.
 
     \vspace{0.5cm}
 
@@ -300,11 +301,17 @@ export_graphviz(estimator, out_file="tree.dot",
   \frametitle{Strengths and weaknesses of decision trees}
 
   \begin{itemize}
-    \item {\color{blue} Non-parametric} model, supporting {\color{blue} heterogeneous} data
+    \item {\color{blue} Non-parametric} model, proved to be {\color{blue} consistent}
 
     \vspace{0.25cm}
 
-    \item {\color{blue}Flexibility} in loss functions (but choice is {\color{red}limited})
+    \item Support {\color{blue} heterogeneous} data (continuous, ordered or
+          categorical variables)
+
+    \vspace{0.25cm}
+
+    \item {\color{blue}Flexibility} in loss functions (but choice is
+          {\color{red}limited})
 
     \vspace{0.25cm}
 
@@ -321,7 +328,8 @@ export_graphviz(estimator, out_file="tree.dot",
 
     \item {\color{blue} Low bias}, but usually {\color{red} high variance}\\
         \begin{itemize}
-            \item Solution: Combine the predictions of several randomized trees into a single model.
+            \item Solution: Combine the predictions of several randomized
+                  trees into a single model.
         \end{itemize}
   \end{itemize}
 \end{frame}
@@ -346,8 +354,8 @@ export_graphviz(estimator, out_file="tree.dot",
     \begin{tabular}{lll}
 
     \textbullet\hspace*{0.1cm} Bootstrap samples & \multirow{2}{*}{{\LARGE \}} {\color{blue} Random Forests}} & \\
-    \textbullet\hspace*{0.1cm}  Random selection of $K \leq p$ split variables && \multirow{2}{*}{{\LARGE \}} {\color{blue} Extra-Trees}} \\
-    \textbullet\hspace*{0.1cm}  Random selection of the threshold  & \\
+    \textbullet\hspace*{0.1cm} Random selection of $K \leq p$ split variables && \multirow{2}{*}{{\LARGE \}} {\color{blue} Extra-Trees}} \\
+    \textbullet\hspace*{0.1cm} Random selection of the threshold  & \\
     \end{tabular}}
 \end{frame}
 
@@ -434,13 +442,14 @@ plt.show()
 
 
 \begin{frame}[fragile]
-\frametitle{Tuning randomization in \texttt{sklearn.ensemble}}
-
+    \frametitle{Tuning randomization in \texttt{sklearn.ensemble}}
     \begin{figure}
         \includegraphics[width=0.9\textwidth]{./figures/randomness.png}
     \end{figure}
 
-Best-tradeoff: ExtraTrees, for \texttt{max\_features=6}.
+    \begin{center}
+        Best-tradeoff: ExtraTrees, for \texttt{max\_features=6}.
+    \end{center}
 \end{frame}
 
 
@@ -449,7 +458,8 @@ Best-tradeoff: ExtraTrees, for \texttt{max\_features=6}.
 
   \begin{itemize}
 
-    \item {\color{blue}Fine control} of bias and variance through averaging and randomization, resulting in {\color{blue} better performance}
+    \item {\color{blue}Fine control} of bias and variance through averaging
+          and randomization, resulting in {\color{blue} better performance}
 
     \vspace{0.25cm}
 
@@ -461,7 +471,7 @@ Best-tradeoff: ExtraTrees, for \texttt{max\_features=6}.
 
     \vspace{0.25cm}
 
-    \item Embarrassingly {\color{blue} parallel}
+    \item Embarrassingly {\color{blue} parallel} (use \texttt{n\_jobs})
 
     \vspace{0.25cm}
 
@@ -481,8 +491,8 @@ Best-tradeoff: ExtraTrees, for \texttt{max\_features=6}.
   \item GBRT fits an additive model of the form
   $$\varphi(x) =  \sum_{m=1}^M \gamma_m h_m(x)$$
 
-  \item The ensemble is built in a forward stagewise manner, where each weak leaner is a successive
-        gradient step
+  \item The ensemble is built in a forward stagewise manner, where each weak
+        learner is a successive gradient step
         $$\varphi_m(x) =  \varphi_{m-1}(x) + \gamma_m \sum_{i=1}^N \Delta_\varphi L(y_i, \varphi_{m-1}(x_i))$$
   \end{itemize}
 
@@ -526,14 +536,17 @@ See our PyData 2014 tutorial for further guidance
 \end{frame}
 
 \begin{frame}
-  \frametitle{Strengths and weaknesses}
+  \frametitle{Strengths and weaknesses of GBRT}
 
   \begin{itemize}
-        \item {\color{blue} Flexible framework}, that can adapt to arbitrary loss functions.
+        \item {\color{blue} Flexible framework}, that can adapt to arbitrary
+              loss functions.
 
         \vspace{0.25cm}
 
-        \item Fine control of under/overfitting through {\color{blue} regularization} (e.g., learning rate, subsampling, tree structure, penalization term in the loss function, etc)
+        \item Fine control of under/overfitting through {\color{blue}
+              regularization} (e.g., learning rate, subsampling,
+              tree structure, penalization term in the loss function, etc)
 
         \vspace{0.25cm}
 
@@ -559,8 +572,6 @@ See our PyData 2014 tutorial for further guidance
 \begin{pythoncode}
 importances = pd.DataFrame()
 
-# todo: add gbrt
-
 # Variable importances with Random Forest, default parameters
 est = RandomForestRegressor(n_estimators=10000, n_jobs=-1).fit(X, y)
 importances["RF"] = pd.Series(est.feature_importances_,
@@ -572,7 +583,10 @@ est = ExtraTreesRegressor(max_features=1, max_depth=3,
 importances["TRTs"] = pd.Series(est.feature_importances_,
                                 index=feature_names)
 
-# Importances from TRTs dont suffer from bias
+# Variable importances with GBRT
+importances["GBRT"] = pd.Series(gbrt.feature_importances_,
+                                index=feature_names)
+
 importances.plot(kind="barh")
 \end{pythoncode}
 }
@@ -586,18 +600,76 @@ importances.plot(kind="barh")
 \includegraphics[width=0.95\textwidth]{./figures/importances.png}
 \end{figure}
 
+\begin{center}
+Importances are measured only through the eyes of the model you are using.
+They may not tell the entire nor the same story!
+\end{center}
+
 \end{frame}
 
-\begin{frame}
+\begin{frame}[fragile]
   \frametitle{Partial dependence plots}
+
+{\scriptsize
+\begin{pythoncode}
+from sklearn.ensemble.partial_dependence import plot_partial_dependence
+plot_partial_dependence(gbrt, X,
+                        features=[1, 10], feature_names=feature_names)
+\end{pythoncode}
+}
+
+
+    \begin{figure}
+       \centering
+       \includegraphics[width=\textwidth]{./figures/dependence.png}
+    \end{figure}
+
+
 \end{frame}
 
-\begin{frame}
-  \frametitle{Outlier detection}
-\end{frame}
-
-\begin{frame}
+\begin{frame}[fragile]
   \frametitle{Embedding}
+
+{\scriptsize
+\begin{pythoncode}
+from sklearn.ensemble import RandomTreesEmbedding
+from sklearn.decomposition import TruncatedSVD
+
+# Project wines through a forest of totally randomized trees
+hasher = RandomTreesEmbedding(n_estimators=1000)
+X_transformed = hasher.fit_transform(X)
+
+# Plot wines on a plane using the 2 principal components
+svd = TruncatedSVD(n_components=2)
+coords = svd.fit_transform(X_transformed)
+
+n_values = 10 + 1  # Wine preferences are from 0 to 10
+cm = plt.get_cmap("hsv")
+colors =  (cm(1. * i / n_values) for i in range(n_values))
+
+for k, c in zip(range(n_values), colors):
+    plt.plot(coords[y == k, 0], coords[y == k, 1], '.', label=k, color=c)
+
+plt.legend()
+plt.show()
+\end{pythoncode}
+}
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+  \frametitle{Embedding}
+
+    \begin{figure}
+       \centering
+       \includegraphics[width=0.95\textwidth]{./figures/embedding.png}
+    \end{figure}
+
+    \begin{center}
+        Can you guess what these 2 clusters correspond to?
+    \end{center}
+
 \end{frame}
 
 
@@ -612,6 +684,8 @@ importances.plot(kind="barh")
 
 \begin{frame}
   \frametitle{Summary}
+
+  % recap main strengths and weakness
 \end{frame}
 
 \begin{frame}
