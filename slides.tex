@@ -476,14 +476,73 @@ Best-tradeoff: ExtraTrees, for \texttt{max\_features=6}.
 
 \begin{frame}
   \frametitle{Gradient Boosted Regression Trees [J. Friedman, 1999]}
+
+  \begin{itemize}
+  \item GBRT fits an additive model of the form
+  $$\varphi(x) =  \sum_{m=1}^M \gamma_m h_m(x)$$
+
+  \item The ensemble is built in a forward stagewise manner, where each weak leaner is a successive
+        gradient step
+        $$\varphi_m(x) =  \varphi_{m-1}(x) + \gamma_m \sum_{i=1}^N \Delta_\varphi L(y_i, \varphi_{m-1}(x_i))$$
+  \end{itemize}
+
+    \begin{figure}
+       \centering
+       \includegraphics[width=\textwidth]{./figures/residual_fitting_2.pdf}
+    \end{figure}
+
 \end{frame}
 
-\begin{frame}
+\begin{frame}[fragile]
   \frametitle{Careful tuning required}
+
+{\scriptsize
+\begin{pythoncode}
+from sklearn.ensemble import GradientBoostingRegressor
+from sklearn.cross_validation import ShuffleSplit
+from sklearn.grid_search import GridSearchCV
+
+# Careful tuning is required to obtained good results
+param_grid = {"learning_rate": [0.1, 0.01, 0.001],
+              "subsample": [1.0, 0.9, 0.8],
+              "max_depth": [3, 5, 7],
+              "min_samples_leaf": [1, 3, 5]}
+
+est = GradientBoostingRegressor(n_estimators=1000)
+grid = GridSearchCV(est, param_grid,
+                    cv=ShuffleSplit(n=len(X), n_iter=10, test_size=0.25),
+                    scoring="mean_squared_error",
+                    n_jobs=-1).fit(X, y)
+
+gbrt = grid.best_estimator_
+\end{pythoncode}
+}
+
+\begin{center}
+See our PyData 2014 tutorial for further guidance
+\url{https://github.com/pprett/pydata-gbrt-tutorial}
+\end{center}
+
 \end{frame}
 
 \begin{frame}
   \frametitle{Strengths and weaknesses}
+
+  \begin{itemize}
+        \item {\color{blue} Flexible framework}, that can adapt to arbitrary loss functions.
+
+        \vspace{0.25cm}
+
+        \item Fine control of under/overfitting through {\color{blue} regularization} (e.g., learning rate, subsampling, tree structure, penalization term in the loss function, etc)
+
+        \vspace{0.25cm}
+
+        \item {\color{red} Careful tuning} required
+
+        \vspace{0.25cm}
+
+        \item {\color{red} Slow} to train, {\color{blue} fast} to predict
+  \end{itemize}
 \end{frame}
 
 % Framework (loss function, regularization, etc)
