@@ -301,28 +301,29 @@ export_graphviz(estimator, out_file="tree.dot",
   \frametitle{Strengths and weaknesses of decision trees}
 
   \begin{itemize}
-    \item {\color{blue} Non-parametric} model, proved to be {\color{blue} consistent}
+    \item {\color{blue} Non-parametric} model, proved to be
+          {\color{blue} consistent}.
 
     \vspace{0.25cm}
 
     \item Support {\color{blue} heterogeneous} data (continuous, ordered or
-          categorical variables)
+          categorical variables).
 
     \vspace{0.25cm}
 
     \item {\color{blue}Flexibility} in loss functions (but choice is
-          {\color{red}limited})
+          {\color{red}limited}).
 
     \vspace{0.25cm}
 
-    \item {\color{blue} Fast} to train, {\color{blue} fast} to predict
+    \item {\color{blue} Fast} to train, {\color{blue} fast} to predict.
         \begin{itemize}
             \item In the average case, complexity of training is $\Theta(pN\log^2 N)$.
         \end{itemize}
 
     \vspace{0.25cm}
 
-    \item Easily {\color{blue} interpretable}
+    \item Easily {\color{blue} interpretable}.
 
     \vspace{0.25cm}
 
@@ -459,11 +460,11 @@ plt.show()
   \begin{itemize}
 
     \item {\color{blue}Fine control} of bias and variance through averaging
-          and randomization, resulting in {\color{blue} better performance}
+          and randomization, resulting in {\color{blue} better performance}.
 
     \vspace{0.25cm}
 
-    \item Moderately fast to train and to predict
+    \item Moderately fast to train and to predict.
         \begin{itemize}
             \item $\Theta(MK\widetilde{N}\log^2 \widetilde{N})$ for RFs
             \item $\Theta(MKN\log N)$ for ETs
@@ -471,11 +472,11 @@ plt.show()
 
     \vspace{0.25cm}
 
-    \item Embarrassingly {\color{blue} parallel} (use \texttt{n\_jobs})
+    \item Embarrassingly {\color{blue} parallel} (use \texttt{n\_jobs}).
 
     \vspace{0.25cm}
 
-    \item {\color{red} Less interpretable} than decision trees
+    \item {\color{red} Less interpretable} than decision trees.
   \end{itemize}
 \end{frame}
 
@@ -491,9 +492,8 @@ plt.show()
   \item GBRT fits an additive model of the form
   $$\varphi(x) =  \sum_{m=1}^M \gamma_m h_m(x)$$
 
-  \item The ensemble is built in a forward stagewise manner, where each weak
-        learner is a successive gradient step
-        $$\varphi_m(x) =  \varphi_{m-1}(x) + \gamma_m \sum_{i=1}^N \Delta_\varphi L(y_i, \varphi_{m-1}(x_i))$$
+  \item The ensemble is built in a forward stagewise manner, where each
+        regression tree $h_m$ is an approximate successive gradient step.
   \end{itemize}
 
     \begin{figure}
@@ -546,15 +546,15 @@ See our PyData 2014 tutorial for further guidance
 
         \item Fine control of under/overfitting through {\color{blue}
               regularization} (e.g., learning rate, subsampling,
-              tree structure, penalization term in the loss function, etc)
+              tree structure, penalization term in the loss function, etc).
 
         \vspace{0.25cm}
 
-        \item {\color{red} Careful tuning} required
+        \item {\color{red} Careful tuning} required.
 
         \vspace{0.25cm}
 
-        \item {\color{red} Slow} to train, {\color{blue} fast} to predict
+        \item {\color{red} Slow} to train, {\color{blue} fast} to predict.
   \end{itemize}
 \end{frame}
 
@@ -700,7 +700,7 @@ plt.show()
         \vspace{0.25cm}
 
         \item {\color{blue}Insights on the problem} under study (variable importances,
-              dependence plots, embedding, ...)
+              dependence plots, embedding, ...).
 
         \vspace{0.25cm}
 
