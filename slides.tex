@@ -61,7 +61,7 @@ Gilles Louppe (\href{https://twitter.com/glouppe}{@glouppe})\\
 
 \begin{document}
 
-\begin{frame}
+\begin{frame}[plain]
 \titlepage
 \end{frame}
 
@@ -150,7 +150,7 @@ Gilles Louppe (\href{https://twitter.com/glouppe}{@glouppe})\\
 
 \AtBeginSection[]
 {
-\begin{frame}
+\begin{frame}[noframenumbering, plain]
   \frametitle{Outline}
   \tableofcontents[currentsection]
   % Die Option [pausesections]
@@ -195,7 +195,7 @@ y = [5 5 5 ... 6 7 6]
 \end{frame}
 
 \begin{frame}[fragile]
-    \frametitle{Decision trees [L. Breiman, 1984]}
+    \frametitle{Decision trees \citep{breiman:1984}}
     \begin{columns}
         \begin{column}{0.3\textwidth}
             \begin{figure}
@@ -232,7 +232,7 @@ y = [5 5 5 ... 6 7 6]
     \frametitle{Composability of decision trees}
 
     Decision trees can be used to solve several machine learning tasks by
-    simply swapping the impurity and leaf model functions.
+    swapping the impurity and leaf model functions:
 
     \vspace{0.5cm}
 
@@ -340,7 +340,7 @@ export_graphviz(estimator, out_file="tree.dot",
 \section{Random Forests}
 
 \begin{frame}
-    \frametitle{Random Forests [L. Breiman, 2001]}
+    \frametitle{Random Forests \citep{breiman:2001,geurts:2006}}
 
     \begin{figure}
         \includegraphics[scale=0.5]{./figures/forest.pdf}
@@ -387,7 +387,7 @@ the predictions of two randomized trees built on the same learning set.
 \end{frame}
 
 
-\begin{frame}{Diagnosing the generalization error of random forests}
+\begin{frame}{Diagnosing the error of random forests \citep{louppe2014understanding}}
 
 \begin{itemize}
 \item Bias: {\color{blue} Identical} to the bias of a single randomized tree.
@@ -485,7 +485,7 @@ plt.show()
 \section{Boosting}
 
 \begin{frame}
-  \frametitle{Gradient Boosted Regression Trees [J. Friedman, 1999]}
+  \frametitle{Gradient Boosted Regression Trees \citep{friedman:2001}}
 
   \begin{itemize}
   \item GBRT fits an additive model of the form
@@ -601,14 +601,18 @@ importances.plot(kind="barh")
 \end{figure}
 
 \begin{center}
-Importances are measured only through the eyes of the model you are using.
-They may not tell the entire nor the same story!
+Importances are measured only through the eyes of the model.
+{\color{red}They may not tell the entire nor the same story!} \citep{louppe:2013}
 \end{center}
 
 \end{frame}
 
 \begin{frame}[fragile]
   \frametitle{Partial dependence plots}
+
+Relation between the response $Y$ and a subset of features, marginalized over all other features.
+
+\vspace{0.25cm}
 
 {\scriptsize
 \begin{pythoncode}
@@ -618,13 +622,10 @@ plot_partial_dependence(gbrt, X,
 \end{pythoncode}
 }
 
-
     \begin{figure}
        \centering
-       \includegraphics[width=\textwidth]{./figures/dependence.png}
+       \includegraphics[width=0.9\textwidth]{./figures/dependence.png}
     \end{figure}
-
-
 \end{frame}
 
 \begin{frame}[fragile]
@@ -636,6 +637,7 @@ from sklearn.ensemble import RandomTreesEmbedding
 from sklearn.decomposition import TruncatedSVD
 
 # Project wines through a forest of totally randomized trees
+# and use the leafs the samples end into as a high-dimensional representation
 hasher = RandomTreesEmbedding(n_estimators=1000)
 X_transformed = hasher.fit_transform(X)
 
@@ -676,22 +678,55 @@ plt.show()
 
 % Summary =================================================================
 
-% strong points and weaknesses
-% going further
-
-
 \section{Summary}
 
 \begin{frame}
   \frametitle{Summary}
 
-  % recap main strengths and weakness
+  \begin{itemize}
+        \item Tree-based methods offer a {\color{blue}flexible and efficient non-parametric} framework
+              for classification and regression.
+
+        \vspace{0.25cm}
+
+        \item Applicable to a wide variety of problems, with a {\color{blue}fine control}
+              over the model that is learned.
+
+        \vspace{0.25cm}
+
+        \item Assume a good feature representation -- i.e., tree-based methods are often {\color{red}not that good on very
+              raw input data}, like pixels, speech signals, etc.
+
+        \vspace{0.25cm}
+
+        \item {\color{blue}Insights on the problem} under study (variable importances,
+              dependence plots, embedding, ...)
+
+        \vspace{0.25cm}
+
+        \item {\color{blue}Efficient implementation} in Scikit-Learn.
+  \end{itemize}
 \end{frame}
 
 \begin{frame}
-\begin{center}
-{\Huge  Questions?}
-\end{center}
+    \begin{columns}
+    \begin{column}{0.5\textwidth}
+
+    Join us on \url{https://github.com/scikit-learn/scikit-learn}
+
+    \end{column}
+    \begin{column}{0.5\textwidth}
+      \begin{figure}
+      \includegraphics[width=\textwidth]{./figures/we_want_you.png}
+      \end{figure}
+    \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}[plain,allowframebreaks,noframenumbering]
+    \frametitle{References}
+    \bibliographystyle{apalike}
+    \bibliography{biblio}
 \end{frame}
 
 \end{document}
